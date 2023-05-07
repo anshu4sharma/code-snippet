@@ -16,11 +16,12 @@ const Index = () => {
       captureRef.current.style.backgroundImage = "";
     }
   };
-
   const handleCapture = async () => {
     if (!captureRef.current) return;
     try {
-      const canvas = await html2canvas(captureRef.current);
+      const canvas = await html2canvas(captureRef.current, {
+        ignoreElements: (element) => element.id === "code-area"
+      });
       const url = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.download = "image.png";
@@ -28,12 +29,11 @@ const Index = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.open("https://anshusharma.me", "_blank");
     } catch (error) {
       console.log(error);
     }
   };
-
+  
   const handleTheme = (e: unknown) => {
     // @ts-ignore
     const captureRefStyle = captureRef.current && captureRef.current.style; // @ts-ignore
@@ -50,8 +50,8 @@ const Index = () => {
     <div className="p-10 h-screen justify-center items-center grid place-content-center">
       <div
         ref={captureRef}
-        className="p-10 orientation rounded resize w-full overflow-auto cursor-auto flex justify-center min-w-[340px] scrollbar-hide"
-        style={{ background }}
+        className="p-8 orientation rounded resize w-full overflow-auto cursor-auto flex justify-center min-w-[340px] scrollbar-hide"
+        style={{ background }} suppressHydrationWarning={true}
       >
         <Terminal />
       </div>
